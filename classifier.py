@@ -1,12 +1,12 @@
 ## Imports
 
-import csv
+import csv, numpy
 from pandas import DataFrame
 
 ## Functions
 
 def load_data(path, include_labels=True):
-    ''' Accepts a two column csv file with text and label data and returns a Pandas DataFrame '''
+    ''' Accepts a two column csv file with text and label data and returns a Pandas DataFrame (training) or list (testing) '''
     rows = []
     with open(path, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -24,6 +24,14 @@ def load_data(path, include_labels=True):
         return DataFrame(rows)
     else:
         return rows
+
+def shuffle_data(data):
+    ''' Accepts a DataFrame of training data and shuffles the rows '''
+    return data.reindex(numpy.random.permutation(data.index))
+
+def extract_features(data):
+    pass
+
 
 ## Testing
 
@@ -52,10 +60,13 @@ def test_load_data():
 
     assert load_data('data/test_testing_data.csv', include_labels=False) == testing_data
 
+def test_shuffle_data():
+    ''' This really doesn't need to be tested, can write a test later if needed '''
+    data = load_data('data/test_testing_data.csv', True)
+    print(shuffle_data(data))
 
-def test_load_testing_data():
-    pass
 
 ## Run
 
 test_load_data()
+test_shuffle_data()
