@@ -5,31 +5,36 @@ from pandas import DataFrame
 
 ## Functions
 
-def load_training_data(path):
+def load_training_data(path, include_labels=True):
+    ''' Accepts a two column csv file with text and label data and returns a Pandas DataFrame '''
     rows = []
-    with open('data/test_data.csv', 'r') as csvfile:
+    with open('data/test_testing_data.csv', 'r') as csvfile:
         csvreader = csv.reader(csvfile)
         line_number = 0
         for row in csvreader:
             line_number += 1
             if line_number > 1:
-                line_dict = {'text':row[0], 'class':row[1]}
-                rows.append(line_dict)
-    return DataFrame(rows)
+                if include_labels:
+                    lines = {'text':row[0], 'class':row[1]}
+                    rows.append(lines)
+                else:
+                    rows.append(row[0])
 
-def load_testing_data(path):
-    pass
+    if include_labels:
+        return DataFrame(rows)
+    else:
+        return rows
 
 ## Testing
 
 def test_load_training_data():
-    rows = [{'text':'UBER | Actue | Dizziness',
+    labeled_rows = [{'text':'UBER | Actue | Dizziness',
             'class':'Urgent'},
             {'text':'Discussing - has concerns and wants to talk about her fall ',
             'class':'Not urgent'}]
-    #print(load_training_data('data/test_data.csv'))
-    #print(rows)
-    assert DataFrame(rows).equals(load_training_data('data/test_data.csv'))
+    unlabeled_rows = ['UBER | Actue | Dizziness','Discussing - has concerns and wants to talk about her fall ']
+    assert DataFrame(labeled_rows).equals(load_training_data('data/test_testing_data.csv', include_labels=True))
+
 
 def test_load_testing_data():
     pass
