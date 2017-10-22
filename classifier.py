@@ -4,6 +4,7 @@ import csv, numpy, scipy
 from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
 
 ## Functions
 
@@ -31,16 +32,16 @@ def shuffle_data(data):
     ''' Accepts a DataFrame of training data and shuffles the rows '''
     return data.reindex(numpy.random.permutation(data.index))
 
+def create_and_classify_with_pipeline(data, examples):
+    '''Accepts training data, and testing data and returns predicted results'''
+    pipeline = Pipeline([
+        ('vectorizer',  CountVectorizer(stop_words='english')),
+        ('classifier',  MultinomialNB()) ])
+    pipeline.fit(data['text'].values, data['class'].values)
+    return pipeline.predict(examples) # ['label1','label2']
 
-def extract_features(data):
-    ''' Accepts a DataFrame and extracts feature data - in this case words and their positions '''
-    count_vectorizer = CountVectorizer(stop_words='english')
-    feature_counts = count_vectorizer.fit_transform(data['text'].values)
-    #print(count_vectorizer.vocabulary_)
-    return feature_counts
 
-
-def extract_features_create_classifier_and_run_examples(data, feature_counts, examples):
+def extract_features_create_classifier_and_run_examples(data, examples):
     ''' UPDATE: Accepts an extracted CountVectorizer of feature counts and creates a trained NaiveBayes classifier to use for prediction'''
 
     count_vectorizer = CountVectorizer(stop_words='english')
@@ -109,10 +110,12 @@ def test_create_classifier(data, feature_counts):
 
 data = load_data('data/TrainingData_925_to_1022.csv', True)
 data = shuffle_data(data)
-feature_counts = extract_features(data)
 short_examples = ["Sick visit - cough", "F/u on blood pressure"]
 all_examples = load_data('data/TestingData_925_to_1022.csv', False)
 
-predicted_results = extract_features_create_classifier_and_run_examples(data, feature_counts, all_examples)
+#predicted_results = extract_features_create_classifier_and_run_examples(data, all_examples)
+
+predicted_results = create_and_classify_with_pipeline(data, all_examples)
+
 for r in predicted_results:
     print(r)
