@@ -41,27 +41,7 @@ def create_and_classify_with_pipeline(data, examples):
     return pipeline.predict(examples) # ['label1','label2']
 
 
-def extract_features_create_classifier_and_run_examples(data, examples):
-    ''' UPDATE: Accepts an extracted CountVectorizer of feature counts and creates a trained NaiveBayes classifier to use for prediction'''
-
-    count_vectorizer = CountVectorizer(stop_words='english')
-    feature_counts = count_vectorizer.fit_transform(data['text'].values)
-
-    # Train on training data
-    classifier = MultinomialNB()
-    targets = data['class'].values
-    classifier.fit(feature_counts, targets)
-
-    # Test on examples
-    example_counts = count_vectorizer.transform(examples)
-    predictions = classifier.predict(example_counts)
-
-    return predictions
-
-
 ## Testing
-
-
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -119,3 +99,4 @@ predicted_results = create_and_classify_with_pipeline(data, all_examples)
 
 for r in predicted_results:
     print(r)
+
