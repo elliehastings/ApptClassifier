@@ -31,6 +31,7 @@ def shuffle_data(data):
     ''' Accepts a DataFrame of training data and shuffles the rows '''
     return data.reindex(numpy.random.permutation(data.index))
 
+
 def extract_features(data):
     ''' Accepts a DataFrame and extracts feature data - in this case words and their positions '''
     count_vectorizer = CountVectorizer(stop_words='english')
@@ -38,13 +39,23 @@ def extract_features(data):
     #print(count_vectorizer.vocabulary_)
     return feature_counts
 
-def create_classifier(data, feature_counts):
-    ''' Accepts an extracted CountVectorizer of feature counts and creates a trained NaiveBayes classifier to use for prediction'''
+
+def extract_features_create_classifier_and_run_examples(data, feature_counts, examples):
+    ''' UPDATE: Accepts an extracted CountVectorizer of feature counts and creates a trained NaiveBayes classifier to use for prediction'''
+
+    count_vectorizer = CountVectorizer(stop_words='english')
+    feature_counts = count_vectorizer.fit_transform(data['text'].values)
+
+    # Train on training data
     classifier = MultinomialNB()
     targets = data['class'].values
     classifier.fit(feature_counts, targets)
 
-    return classifier
+    # Test on examples
+    example_counts = count_vectorizer.transform(examples)
+    predictions = classifier.predict(example_counts)
+
+    return predictions
 
 
 ## Testing
@@ -99,9 +110,9 @@ def test_create_classifier(data, feature_counts):
 data = load_data('data/TrainingData_925_to_1022.csv', True)
 data = shuffle_data(data)
 feature_counts = extract_features(data)
-classifier = create_classifier(data, feature_counts)
-examples = ["Sick visit - cough", "F/u on blood pressure"]
-count_vectorizer = CountVectorizer(stop_words='english')
-example_counts = count_vectorizer.transform(examples)
-predictions = classifier.predict(example_counts)
-print(predictions)
+short_examples = ["Sick visit - cough", "F/u on blood pressure"]
+all_examples = load_data('data/TestingData_925_to_1022.csv', False)
+
+predicted_results = extract_features_create_classifier_and_run_examples(data, feature_counts, all_examples)
+for r in predicted_results:
+    print(r)
