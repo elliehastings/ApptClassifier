@@ -3,6 +3,7 @@
 import csv, numpy, scipy
 from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
 
 ## Functions
 
@@ -37,10 +38,19 @@ def extract_features(data):
     #print(count_vectorizer.vocabulary_)
     return feature_counts
 
+def create_classifier(data, feature_counts):
+    ''' Accepts an extracted CountVectorizer of feature counts and creates a trained NaiveBayes classifier to use for prediction'''
+    classifier = MultinomialNB()
+    targets = data['class'].values
+    classifier.fit(feature_counts, targets)
+
+    return classifier
+
 
 ## Testing
 
 DATA = load_data('data/test_training_data.csv', True)
+FEATURE_COUNTS = extract_features(DATA)
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -67,6 +77,8 @@ def test_load_data():
 
     assert load_data('data/test_testing_data.csv', include_labels=False) == testing_data
 
+# Tests below here are placeholders; come back and add real tests (besides printing) as a refactor step
+
 def test_shuffle_data(data):
     ''' This really doesn't need to be tested, can write a test later if needed '''
     #print(shuffle_data(data))
@@ -74,8 +86,12 @@ def test_shuffle_data(data):
 
 def test_extract_features(data):
     features = extract_features(data)
-    print(features)
-    print(type(features))
+    #print(features)
+    #print(type(features))
+
+def test_create_classifier(data, feature_counts):
+    classifier = create_classifier(data, feature_counts)
+    print(classifier)
 
 
 
@@ -84,6 +100,8 @@ def test_extract_features(data):
 test_load_data()
 test_shuffle_data(DATA)
 test_extract_features(DATA)
+test_create_classifier(DATA, FEATURE_COUNTS)
 
 
 ## Run
+
