@@ -1,7 +1,8 @@
 ## Imports
 
-import csv, numpy
+import csv, numpy, scipy
 from pandas import DataFrame
+from sklearn.feature_extraction.text import CountVectorizer
 
 ## Functions
 
@@ -30,10 +31,16 @@ def shuffle_data(data):
     return data.reindex(numpy.random.permutation(data.index))
 
 def extract_features(data):
-    pass
+    ''' Accepts a DataFrame and extracts feature data - in this case words and their positions '''
+    count_vectorizer = CountVectorizer(stop_words='english')
+    feature_counts = count_vectorizer.fit_transform(data['text'].values)
+    #print(count_vectorizer.vocabulary_)
+    return feature_counts
 
 
 ## Testing
+
+DATA = load_data('data/test_training_data.csv', True)
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -60,13 +67,23 @@ def test_load_data():
 
     assert load_data('data/test_testing_data.csv', include_labels=False) == testing_data
 
-def test_shuffle_data():
+def test_shuffle_data(data):
     ''' This really doesn't need to be tested, can write a test later if needed '''
-    data = load_data('data/test_testing_data.csv', True)
-    print(shuffle_data(data))
+    #print(shuffle_data(data))
+    pass
+
+def test_extract_features(data):
+    features = extract_features(data)
+    print(features)
+    print(type(features))
+
+
+
+## Test
+
+test_load_data()
+test_shuffle_data(DATA)
+test_extract_features(DATA)
 
 
 ## Run
-
-test_load_data()
-test_shuffle_data()
