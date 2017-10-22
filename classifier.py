@@ -49,8 +49,7 @@ def create_classifier(data, feature_counts):
 
 ## Testing
 
-DATA = load_data('data/test_training_data.csv', True)
-FEATURE_COUNTS = extract_features(DATA)
+
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -95,13 +94,14 @@ def test_create_classifier(data, feature_counts):
 
 
 
-## Test
-
-test_load_data()
-test_shuffle_data(DATA)
-test_extract_features(DATA)
-test_create_classifier(DATA, FEATURE_COUNTS)
-
-
 ## Run
 
+data = load_data('data/TrainingData_925_to_1022.csv', True)
+data = shuffle_data(data)
+feature_counts = extract_features(data)
+classifier = create_classifier(data, feature_counts)
+examples = ["Sick visit - cough", "F/u on blood pressure"]
+count_vectorizer = CountVectorizer(stop_words='english')
+example_counts = count_vectorizer.transform(examples)
+predictions = classifier.predict(example_counts)
+print(predictions)
