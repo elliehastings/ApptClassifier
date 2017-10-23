@@ -1,7 +1,7 @@
 ## Imports
 
 import csv, numpy, scipy
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
@@ -35,8 +35,19 @@ def create_and_classify_with_pipeline(data, examples):
     pipeline.fit(data['text'].values, data['class'].values)
     return pipeline.predict(examples) # ['label1','label2']
 
+def write_predictions_to_file(y_examples, predicted_results, target_file_name):
+    ''' Accepts an array of examples to classify and the predicted results and writes them to a csv file '''
 
-## Testing - stopped after one function :)
+    y_examples_array = numpy.array(y_examples, dtype=Series)
+
+    with open(target_file_name, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Text','Class'])
+        for i in range(0, len(y_examples_array)):
+            writer.writerow([y_examples_array[i], predicted_results[i]])
+
+
+## Testing
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -52,6 +63,20 @@ def test_load_data():
 
     assert DataFrame(testing_data).equals(load_data('data/test_testing_data.csv'))
 
+def test_shuffle_data():
+    test_dataframe = DataFrame([i for i in range(1,101)])
+    shuffled_test_dataframe = shuffle_data(test_dataframe)
+    try:
+        shuffled_test_dataframe.iloc[0:5] != test_dataframe.iloc[0:5]
+        raise AssertionError('Shuffled DataFrame equal to source DataFrame')
+    except ValueError:
+        pass
+
+
+####### Tests ######
+
+test_load_data()
+test_shuffle_data()
 
 
 ####### Run #######
@@ -62,4 +87,5 @@ y_examples, y_results = testing_data['text'], testing_data['class']
 predicted_results = create_and_classify_with_pipeline(training_data, y_examples)
 f1_score = f1_score(y_results, predicted_results, pos_label='Urgent')
 print("F1 Score is: {}".format(f1_score))
-
+write_predictions_to_file(y_examples, predicted_results, 'data/output_predicted_results.csv')
+print("Wrote predictions to file")
