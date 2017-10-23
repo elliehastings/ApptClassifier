@@ -5,10 +5,11 @@ from pandas import DataFrame
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import confusion_matrix, f1_score
 
 ## Functions
 
-def load_data(path, include_labels=True):
+def load_data(path):
     ''' Accepts a two column csv file with text and label data and returns a Pandas DataFrame (training) or list (testing) '''
     rows = []
     with open(path, 'r') as csvfile:
@@ -17,16 +18,10 @@ def load_data(path, include_labels=True):
         for row in csvreader:
             line_number += 1
             if line_number > 1:
-                if include_labels:
-                    lines = {'text':row[0], 'class':row[1]}
-                    rows.append(lines)
-                else:
-                    rows.append(row[0])
+                lines = {'text':row[0], 'class':row[1]}
+                rows.append(lines)
 
-    if include_labels:
-        return DataFrame(rows)
-    else:
-        return rows
+    return DataFrame(rows)
 
 def shuffle_data(data):
     ''' Accepts a DataFrame of training data and shuffles the rows '''
@@ -48,7 +43,10 @@ def test_load_data():
             'class':'Urgent'},
             {'text':'Discussing - has concerns and wants to talk about her fall ',
             'class':'Not urgent'}]
-    testing_data = ['PC: Rash FU ','Acute | Chronic Cough']
+    testing_data = [{'text':'PC: Rash FU ',
+            'class':'Not urgent'},
+            {'text':'Acute | Chronic Cough',
+            'class':'Urgent'}]
 
     # print('\n')
     # print('DataFrame of training data:')
@@ -64,38 +62,28 @@ def test_load_data():
     # print(testing_data)
     # print('\n')
 
-    assert DataFrame(training_data).equals(load_data('data/test_training_data.csv', include_labels=True))
+    assert DataFrame(training_data).equals(load_data('data/test_training_data.csv'))
 
-    assert load_data('data/test_testing_data.csv', include_labels=False) == testing_data
-
-# Tests below here are placeholders; come back and add real tests (besides printing) as a refactor step
-
-def test_shuffle_data(data):
-    ''' This really doesn't need to be tested, can write a test later if needed '''
-    #print(shuffle_data(data))
-    pass
-
-def test_extract_features(data):
-    features = extract_features(data)
-    #print(features)
-    #print(type(features))
-
-def test_create_classifier(data, feature_counts):
-    classifier = create_classifier(data, feature_counts)
-    print(classifier)
+    assert DataFrame(testing_data).equals(load_data('data/test_testing_data.csv'))
 
 
 
 ## Run
 
-data = load_data('data/TrainingData_925_to_1022.csv', True)
+data = load_data('data/TrainingData_925_to_1022.csv')
 data = shuffle_data(data)
-short_examples = ["Sick visit - cough", "F/u on blood pressure"]
-all_examples = load_data('data/TestingData_925_to_1022.csv', False)
+short_examples = [{'text':"Sick visit - cough"},{'class': "F/u on blood pressure"}]
+all_examples = load_data('data/TestingData_925_to_1022.csv')
+all_examples = shuffle_data(all_examples)
+y_examples = all_examples['text']
 
-#predicted_results = extract_features_create_classifier_and_run_examples(data, all_examples)
+print(all_examples)
 
-predicted_results = create_and_classify_with_pipeline(data, all_examples)
+# test_load_data()
+
+# predicted_results = extract_features_create_classifier_and_run_examples(data, all_examples)
+
+predicted_results = create_and_classify_with_pipeline(data, y_examples)
 
 for r in predicted_results:
     print(r)
