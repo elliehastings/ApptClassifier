@@ -48,43 +48,22 @@ def test_load_data():
             {'text':'Acute | Chronic Cough',
             'class':'Urgent'}]
 
-    # print('\n')
-    # print('DataFrame of training data:')
-    # print(DataFrame(training_data))
-
-    # print('\n')
-    # print('Load training data from file:')
-    # print(load_data('data/test_training_data.csv', include_labels=True))
-    # print('\n')
-
-    # print(load_data('data/test_testing_data', include_labels=False))
-    # print('\n')
-    # print(testing_data)
-    # print('\n')
-
     assert DataFrame(training_data).equals(load_data('data/test_training_data.csv'))
 
     assert DataFrame(testing_data).equals(load_data('data/test_testing_data.csv'))
 
 
 
-## Run
+####### Run #######
 
-data = load_data('data/TrainingData_925_to_1022.csv')
-data = shuffle_data(data)
+training_data = load_data('data/TrainingData_925_to_1022.csv')
+training_data = shuffle_data(training_data)
 short_examples = [{'text':"Sick visit - cough"},{'class': "F/u on blood pressure"}]
-all_examples = load_data('data/TestingData_925_to_1022.csv')
-all_examples = shuffle_data(all_examples)
-y_examples = all_examples['text']
-
-print(all_examples)
-
-# test_load_data()
-
-# predicted_results = extract_features_create_classifier_and_run_examples(data, all_examples)
-
-predicted_results = create_and_classify_with_pipeline(data, y_examples)
-
-for r in predicted_results:
-    print(r)
+testing_data = load_data('data/TestingData_925_to_1022.csv')
+testing_data = shuffle_data(testing_data)
+y_examples = testing_data['text']
+y_results = testing_data['class']
+predicted_results = create_and_classify_with_pipeline(training_data, y_examples)
+f1_score = f1_score(y_results, predicted_results, pos_label='Urgent')
+print(f1_score)
 
