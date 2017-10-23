@@ -30,7 +30,7 @@ def shuffle_data(data):
 def create_and_classify_with_pipeline(data, examples):
     '''Accepts training data, and testing data and returns predicted results'''
     pipeline = Pipeline([
-        ('vectorizer',  CountVectorizer(stop_words='english')),
+        ('vectorizer',  CountVectorizer(stop_words='english', ngram_range=(1,4))),
         ('classifier',  MultinomialNB()) ])
     pipeline.fit(data['text'].values, data['class'].values)
     return pipeline.predict(examples) # ['label1','label2']
