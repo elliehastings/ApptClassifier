@@ -36,7 +36,7 @@ def create_and_classify_with_pipeline(data, examples):
     return pipeline.predict(examples) # ['label1','label2']
 
 
-## Testing
+## Testing - stopped after one function :)
 
 def test_load_data():
     training_data = [{'text':'UBER | Actue | Dizziness',
@@ -56,14 +56,10 @@ def test_load_data():
 
 ####### Run #######
 
-training_data = load_data('data/TrainingData_925_to_1022.csv')
-training_data = shuffle_data(training_data)
-short_examples = [{'text':"Sick visit - cough"},{'class': "F/u on blood pressure"}]
-testing_data = load_data('data/TestingData_925_to_1022.csv')
-testing_data = shuffle_data(testing_data)
-y_examples = testing_data['text']
-y_results = testing_data['class']
+training_data = shuffle_data(load_data('data/TrainingData_925_to_1022.csv'))
+testing_data = shuffle_data(load_data('data/TestingData_925_to_1022.csv'))
+y_examples, y_results = testing_data['text'], testing_data['class']
 predicted_results = create_and_classify_with_pipeline(training_data, y_examples)
 f1_score = f1_score(y_results, predicted_results, pos_label='Urgent')
-print(f1_score)
+print("F1 Score is: {}".format(f1_score))
 
