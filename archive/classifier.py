@@ -93,6 +93,4 @@ test_shuffle_data()
 
 ####### Run #######
 
-#run_classifier('data/TrainingData_925_to_1022.csv', 'data/TestingData_925_to_1022.csv', 'data/output_predicted_results.csv')
-
-run_classifier('data/TrainingData_Andrew.csv', 'data/TestingData_Andrew.csv', 'data/output_predicted_results_Andrew.csv')
+run_classifier('data/TrainingData_925_to_1022.csv', 'data/TestingData_925_to_1022.csv', 'data/output_predicted_results.csv')
