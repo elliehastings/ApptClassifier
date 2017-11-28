@@ -5,4 +5,4 @@ ProjectPlan.md
 data/TrainingData_925_to_1022.csv
 data/TestingData_925_to_1022.csv
 data/test_data.csv
-
+*.csv
